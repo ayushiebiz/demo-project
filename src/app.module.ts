@@ -12,10 +12,12 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       provide: 'USER_SERVICE',
       useFactory: () =>
         ClientProxyFactory.create({
-          transport: Transport.TCP,
+          transport: Transport.RMQ,
           options: {
-            port: parseInt(process.env.USER_SERVICE_PORT || '3001'),
-            host: process.env.DB_HOST || 'localhost',
+            urls: [
+              process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672',
+            ],
+            queue: process.env.USER_QUEUE || 'user_queue',
           },
         }),
     },
@@ -23,10 +25,12 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       provide: 'ORDER_SERVICE',
       useFactory: () =>
         ClientProxyFactory.create({
-          transport: Transport.TCP,
+          transport: Transport.RMQ,
           options: {
-            port: parseInt(process.env.ORDER_SERVICE_PORT || '3002'),
-            host: process.env.DB_HOST || 'localhost',
+            urls: [
+              process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672',
+            ],
+            queue: process.env.ORDER_QUEUE || 'order_queue',
           },
         }),
     },
